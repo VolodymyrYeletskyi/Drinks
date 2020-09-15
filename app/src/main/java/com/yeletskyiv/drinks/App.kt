@@ -1,21 +1,11 @@
 package com.yeletskyiv.drinks
 
 import android.app.Application
-import com.yeletskyiv.drinks.ui.NetworkViewModel
+import com.yeletskyiv.drinks.viewmodel.viewModelModule
+import com.yeletskyiv.drinks.retrofit.networkModule
+import org.koin.android.ext.android.startKoin
 
 class App : Application() {
 
-    private val viewModel = NetworkViewModel.getInstance()
-
-    fun getViewModel(): NetworkViewModel = viewModel
-
-    companion object {
-
-        private var instance: App? = null
-
-        fun getInstance() : App {
-            return if(instance == null) App()
-            else instance as App
-        }
-    }
+    val koin = startKoin(this, listOf(networkModule, viewModelModule))
 }

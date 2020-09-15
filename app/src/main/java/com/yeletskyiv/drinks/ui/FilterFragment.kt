@@ -8,13 +8,15 @@ import androidx.recyclerview.widget.RecyclerView
 import com.yeletskyiv.drinks.R
 import com.yeletskyiv.drinks.recyclerview.CategoryAdapter
 import com.yeletskyiv.drinks.retrofit.Category
+import com.yeletskyiv.drinks.viewmodel.NetworkViewModel
 import kotlinx.android.synthetic.main.fragment_filter.*
+import org.koin.android.viewmodel.ext.android.sharedViewModel
 
-class FilterFragment(private val networkViewModel: NetworkViewModel,
-                     private val categories: List<Category>
-) : Fragment(R.layout.fragment_filter) {
+class FilterFragment(private val categories: List<Category>) : Fragment(R.layout.fragment_filter) {
 
     private val categoryAdapter = CategoryAdapter()
+
+    private val networkViewModel: NetworkViewModel by sharedViewModel()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         (activity as MainActivity).supportActionBar?.title = getString(R.string.filter)
@@ -46,8 +48,8 @@ class FilterFragment(private val networkViewModel: NetworkViewModel,
 
     companion object {
 
-        fun newInstance(viewModel: NetworkViewModel, categories: List<Category>): FilterFragment {
-            return FilterFragment(viewModel, categories)
+        fun newInstance(categories: List<Category>): FilterFragment {
+            return FilterFragment(categories)
         }
     }
 }

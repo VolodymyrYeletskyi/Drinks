@@ -5,11 +5,11 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.yeletskyiv.drinks.R
+import com.yeletskyiv.drinks.recyclerview.viewholder.BaseViewHolder
 import com.yeletskyiv.drinks.retrofit.Category
-import kotlinx.android.extensions.LayoutContainer
 import kotlinx.android.synthetic.main.category_item.view.*
 
-class CategoryAdapter : RecyclerView.Adapter<CategoryAdapter.CategoryViewHolder>() {
+class CategoryAdapter : RecyclerView.Adapter<BaseViewHolder<Category>>() {
 
     private val items = mutableListOf<Category>()
 
@@ -23,14 +23,14 @@ class CategoryAdapter : RecyclerView.Adapter<CategoryAdapter.CategoryViewHolder>
         notifyDataSetChanged()
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CategoryViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BaseViewHolder<Category> {
         val inflater = LayoutInflater.from(parent.context)
         val layoutId = getLayoutId()
         val view = inflater.inflate(layoutId, parent, false)
         return getViewHolder(view)
     }
 
-    override fun onBindViewHolder(holder: CategoryViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: BaseViewHolder<Category>, position: Int) {
         holder.containerView.filterCheckBox.setOnClickListener {
             checked[position] = !checked[position]
         }
@@ -43,7 +43,7 @@ class CategoryAdapter : RecyclerView.Adapter<CategoryAdapter.CategoryViewHolder>
 
     private fun getLayoutId(): Int = R.layout.category_item
 
-    private fun getViewHolder(view: View): CategoryViewHolder  = CategoryViewHolder(view)
+    private fun getViewHolder(view: View): BaseViewHolder<Category>  = CategoryViewHolder(view)
 
     fun getChecked(): List<Boolean> = checked
 
@@ -54,9 +54,9 @@ class CategoryAdapter : RecyclerView.Adapter<CategoryAdapter.CategoryViewHolder>
 
     inner class CategoryViewHolder(
         override val containerView: View
-    ) : RecyclerView.ViewHolder(containerView), LayoutContainer {
+    ) : BaseViewHolder<Category>(containerView) {
 
-        fun bind(data: Category) {
+        override fun bind(data: Category) {
             containerView.categoryTextView.text = data.category
             containerView.filterCheckBox.isChecked = checked[adapterPosition]
         }

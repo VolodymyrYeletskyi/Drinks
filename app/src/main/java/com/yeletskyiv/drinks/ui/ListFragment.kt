@@ -11,13 +11,15 @@ import com.yeletskyiv.drinks.recyclerview.CocktailAdapter
 import com.yeletskyiv.drinks.recyclerview.CocktailScrollListener
 import com.yeletskyiv.drinks.retrofit.Category
 import com.yeletskyiv.drinks.retrofit.Cocktail
+import com.yeletskyiv.drinks.viewmodel.NetworkViewModel
 import kotlinx.android.synthetic.main.fragment_list.*
+import org.koin.android.viewmodel.ext.android.sharedViewModel
 
-class ListFragment(private val networkViewModel: NetworkViewModel,
-                   private var categories: List<Category>
-) : Fragment(R.layout.fragment_list) {
+class ListFragment(private var categories: List<Category>) : Fragment(R.layout.fragment_list) {
 
     private val cocktailAdapter = CocktailAdapter()
+
+    private val networkViewModel: NetworkViewModel by sharedViewModel()
 
     private var categoryIndex = 0
 
@@ -61,8 +63,8 @@ class ListFragment(private val networkViewModel: NetworkViewModel,
 
     companion object {
 
-        fun newInstance(viewModel: NetworkViewModel, categories: List<Category>): ListFragment {
-            return ListFragment(viewModel, categories)
+        fun newInstance(categories: List<Category>): ListFragment {
+            return ListFragment(categories)
         }
     }
 }

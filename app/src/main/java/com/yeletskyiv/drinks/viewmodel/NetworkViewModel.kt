@@ -1,12 +1,14 @@
-package com.yeletskyiv.drinks.ui
+package com.yeletskyiv.drinks.viewmodel
 
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
 import com.yeletskyiv.drinks.retrofit.Category
 import com.yeletskyiv.drinks.retrofit.Cocktail
-import com.yeletskyiv.drinks.retrofit.Network
+import com.yeletskyiv.drinks.retrofit.CocktailsApi
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 
-class NetworkViewModel {
+class NetworkViewModel(private val cocktailsApiService: CocktailsApi) : ViewModel(){
 
     val categoriesData: MutableLiveData<List<Category>> = MutableLiveData()
     val initialData: MutableLiveData<Unit> = MutableLiveData()
@@ -16,12 +18,12 @@ class NetworkViewModel {
     var isLastList = false
     var checkedFilters = mutableListOf<Boolean>()
 
-    fun getCategories() = runBlocking {
-        val response = Network.getInstance().getCocktailsApi().getCategories()
+    fun getCategories() = runBlocking(Dispatchers.IO) {
+        val response = cocktailsApiService.getCategories()
         if (response.isSuccessful) {
-            response.body()?.category?.let { categoriesData.value = it }
+            response.body()?.category?.let { categoriesData.postValue(it) }
         }
-        initialData.value = Unit
+        initialData.postValue(Unit)
     }
 
     fun getAllCategories(): List<Category>? = categoriesData.value
@@ -34,7 +36,7 @@ class NetworkViewModel {
         val cocktails = mutableListOf<Cocktail>()
         cocktails.add(Cocktail(category.category, ""))
 
-        val response = Network.getInstance().getCocktailsApi().getDrinks(category.category)
+        val response = cocktailsApiService.getDrinks(category.category)
         if (response.isSuccessful) {
             response.body()?.drinks?.let { cocktails.addAll(it) }
         }
@@ -42,7 +44,7 @@ class NetworkViewModel {
     }
 
     fun loadMore() {
-        if (!isLastList) loadMoreData.postValue(Unit)
+        if (!isLastList) loadMoreData.value = Unit
     }
 
     fun initializeChecked(size: Int) {
@@ -56,15 +58,5 @@ class NetworkViewModel {
     fun setChecked(checked: List<Boolean>) {
         checkedFilters.clear()
         checkedFilters.addAll(checked)
-    }
-
-    companion object {
-
-        private var instance: NetworkViewModel? = null
-
-        fun getInstance() : NetworkViewModel {
-            return if(instance == null) NetworkViewModel()
-            else instance as NetworkViewModel
-        }
     }
 }

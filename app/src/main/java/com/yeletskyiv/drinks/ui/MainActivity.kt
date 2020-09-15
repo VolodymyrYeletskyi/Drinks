@@ -4,15 +4,16 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
-import com.yeletskyiv.drinks.App
 import com.yeletskyiv.drinks.R
 import com.yeletskyiv.drinks.retrofit.Category
+import com.yeletskyiv.drinks.viewmodel.NetworkViewModel
+import org.koin.android.viewmodel.ext.android.viewModel
 
 class MainActivity : AppCompatActivity() {
 
     private val categories = mutableListOf<Category>()
 
-    private val networkViewModel = App.getInstance().getViewModel()
+    private val networkViewModel: NetworkViewModel by viewModel()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -55,7 +56,7 @@ class MainActivity : AppCompatActivity() {
                     .addToBackStack(null)
                     .replace(
                         R.id.fragment,
-                        FilterFragment.newInstance(networkViewModel, categories)
+                        FilterFragment.newInstance(categories)
                     )
                     .commit()
             }
@@ -63,7 +64,7 @@ class MainActivity : AppCompatActivity() {
                 supportFragmentManager
                     .beginTransaction()
                     .addToBackStack(null)
-                    .replace(R.id.fragment, ListFragment.newInstance(networkViewModel, categories))
+                    .replace(R.id.fragment, ListFragment.newInstance(categories))
                     .commit()
             }
         }
